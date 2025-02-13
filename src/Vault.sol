@@ -1,9 +1,9 @@
-//SPDX-Licence-Identifier: MIT
+// SPDX-Licence-Identifier: MIT
 pragma solidity ^0.8.24;
 
 import { IRebaseToken } from "./interfaces/IRebaseToken.sol";
 
-contract vault {
+contract Vault {
     // we need to pass the token adress to the construtor
     // create a deposit function that mint tokens to the user equal to the amount of ETH the user has sent
     // create redeem function that burns the user's tokens and sends them the ETH
@@ -26,7 +26,8 @@ contract vault {
      */
     function deposit() external payable {
         // we need to use the amount of ETH the user has sent to mint tokens to the user
-        i_rebaseToken.mint(msg.sender, msg.value);
+        uint256 interestRate = i_rebaseToken.getInterestRate();
+        i_rebaseToken.mint(msg.sender, msg.value, interestRate);
         emit Deposit(msg.sender, msg.value);
     }
 
@@ -35,6 +36,9 @@ contract vault {
     * @param _amount the amount of rebase tokens the user wants to redeem
      */
     function redeem(uint256 _amount) external {
+        if (_amount == type(uint256).max) {
+            _amount = i_rebaseToken.balanceOf(msg.sender);
+        }
         // 1. burn the tokens from the user
         i_rebaseToken.burn(msg.sender, _amount);
         // 2. we need to send the user ETH

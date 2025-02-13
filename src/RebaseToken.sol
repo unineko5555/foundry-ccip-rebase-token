@@ -22,18 +22,18 @@ import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol"
 contract RebaseToken is ERC20, Ownable, AccessControl {
     error  RebaseToken__InterestRateCanOnlyDecrease(uint256 oldInterestRate, uint256 newInterestRate);
 
-    uint256 private constant PRECISION_FACTOR = 1e18;
+    uint256 private constant PRECISION_FACTOR = 1e18; //1e18 → 1e27
     bytes32 public constant MINT_AND_BURN_ROLE = keccak256("MINT_AND_BURN_ROLE");
-    uint256 private s_interestRate = 5e10;
+    uint256 private s_interestRate = (5 * PRECISION_FACTOR) / 1e8; // 10^(-8) = 1 / 10^8 = 0.00000001
     mapping (address => uint256) private s_userInterestRate;
     mapping (address => uint256) private s_lastUpdatedTimestamp;
 
     event InterestRateSet(uint256 newInterestRate);
 
     constructor() ERC20("Rebase Token", "RBT") Ownable(msg.sender) AccessControl() {
-        _mint(msg.sender, 1000000 * 10 ** decimals());
-        _setpRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(MINT_AND_BURN_ROLE, msg.sender);
+        // _mint(msg.sender, 1000000 * 10 ** decimals());
+        // _setRoleAdmin(DEFAULT_ADMIN_ROLE, msg.sender);
+        // _setRoleAdmin(MINT_AND_BURN_ROLE, msg.sender);
     }
 
     function grantMintAndBurnRole(address _account) external onlyOwner {
@@ -66,9 +66,9 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
     * @param _to The user to mint the tokens to
     * @param _amount The amount of tokens to mint
     */
-    function mint(address _to, uint256 _amount) external onlyRole(MINT_AND_BURN_ROLE){ //ここでsuperを使わない理由は？
+    function mint(address _to, uint256 _amount, uint256 _userInterfaceRate) external onlyRole(MINT_AND_BURN_ROLE){ //ここでsuperを使わない理由は？
         _mintAccruedInterest(_to);
-        s_userInterestRate[_to] = s_interestRate;
+        s_userInterestRate[_to] = _userInterfaceRate;
         _mint(_to, _amount);
     }
 
@@ -139,7 +139,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
     /*
     * @notice Calculate the interest that has accumulated since the last update
     * @param _user The user to calculate the interest for
-    * @return The interest that has accumulated in the time since the balance was last updated.
+    * @return The linearinterest that has accumulated in the time since the balance was last updated.
     */
     function _calculateUserAccumulatedInterestSinceLastUpdate(address _user) internal view returns (uint256 linearInterest) { //ERC20ではviewを使う
         // we need to calcurate the interest that has accumulated the time since the last update
@@ -158,17 +158,17 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
     * @notice Mint the accrued interest to the user since the last time they intereacted with the protocol (e.g. burn, mint, transfer)
     * @param _user The user to mint the accrued interest to
     */
-    function _mintAccruedInterest(address _user) internal view { //view??
+    function _mintAccruedInterest(address _user) internal { //view??
         // (1) find their current balance of rebase tokens that have been minted to the user -> principal
         uint256 previousPrincipalBalance = super.balanceOf(_user); //ERC20を継承しているのでsuperを使う
         // (2) calculate their current balance including any interest -> balanceOf
         uint256 currentBalance = balanceOf(_user);
         // caluculate the number of tokens that have been minted to the user -> (2) - (1) interest
         uint256 balanceIncrease = currentBalance - previousPrincipalBalance;
-        // set the user's last updated timestamp 
-        s_lastUpdatedTimestamp[_user] = block.timestamp;
         // call _mint to mint the tokens to the user 
         _mint(_user, balanceIncrease); //Interaction of CEI
+        // set the user's last updated timestamp 
+        s_lastUpdatedTimestamp[_user] = block.timestamp;
     }
 
     /*
