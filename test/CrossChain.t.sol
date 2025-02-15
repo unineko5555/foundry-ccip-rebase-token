@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import { Test, console } from "forge-std/Test.sol";
+import { CCIPLocalSimulatorFork } from "@chanlink-local/src/ccip/CCIPLocalSimulatorFork.sol";
 import { RebaseToken } from "../src/RebaseToken.sol";
 import { RebaseTokenPool } from "../src/RebaseTokenPool.sol";
 import { Vault } from "../src/Vault.sol";
@@ -11,13 +12,15 @@ contract CrossChainTest is Test {
     uint256 sepoliaFork;
     uint256 arbSepoliaFork;
 
-    RebaseToken public token;
-    RebaseTokenPool public pool;
-    Vault public vault;
+    CCIPLocalSimulatorFork ccipLocalSimulatorFork;
 
     function setUp() public {
         sepoliaFork = vm.createSelectFork(("sepolia"));
         arbSepoliaFork = vm.createFork(("arb-sepolia"));
+
+        ccipLocalSimulatorFork = new CCIPLocalSimulatorFork();
+        vm.makePersistent(address(ccipLocalSimulatorFork));
+
     }
     
 }
