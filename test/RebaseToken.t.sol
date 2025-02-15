@@ -5,8 +5,6 @@ import { Test, console } from "forge-std/Test.sol";
 import { RebaseToken } from "../src/RebaseToken.sol";
 import { Vault } from "../src/Vault.sol";
 import { IRebaseToken } from "../src/interfaces/IRebaseToken.sol"; 
-import { IAccessControl } from "@ccip/contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/access/IAccessControl.sol";
-import { AccessControl } from "@ccip/contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/access/AccessControl.sol";
 
 contract RebaseTokenTest is Test {
     RebaseToken private rebaseToken;
@@ -39,7 +37,6 @@ contract RebaseTokenTest is Test {
         // (bool success,) = address(vault).call{value: amount}("");
         // 2. check our rebase token balance
         uint256 startBalance = rebaseToken.balanceOf(user);
-        console.log("startBalance: ", startBalance);
         assertEq(startBalance, amount);
         // 3. warp the time and check the balance again
         vm.warp(block.timestamp + 1 hours);
