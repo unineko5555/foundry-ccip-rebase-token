@@ -1,7 +1,7 @@
 // SPDX-Licence-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import { IRebaseToken } from "./interfaces/IRebaseToken.sol";
+import {IRebaseToken} from "./interfaces/IRebaseToken.sol";
 
 contract Vault {
     // we need to pass the token adress to the construtor
@@ -12,17 +12,17 @@ contract Vault {
 
     event Deposit(address indexed user, uint256 amount);
     event Redeem(address indexed user, uint256 amount);
-    
+
     error Vault__RedeemFailed();
 
     constructor(IRebaseToken _rebaseToken) {
         i_rebaseToken = _rebaseToken;
     }
 
-    receive() external payable{}
+    receive() external payable {}
 
     /**
-    * @notice Allows users to deposit ETH into the vault and mint rebase tokens in-return
+     * @notice Allows users to deposit ETH into the vault and mint rebase tokens in-return
      */
     function deposit() external payable {
         // we need to use the amount of ETH the user has sent to mint tokens to the user
@@ -32,8 +32,8 @@ contract Vault {
     }
 
     /**
-    * @notice Allows users to redeem their rebase tokens for ETH
-    * @param _amount the amount of rebase tokens the user wants to redeem
+     * @notice Allows users to redeem their rebase tokens for ETH
+     * @param _amount the amount of rebase tokens the user wants to redeem
      */
     function redeem(uint256 _amount) external {
         if (_amount == type(uint256).max) {
@@ -51,8 +51,8 @@ contract Vault {
     }
 
     /**
-    * @notice Get the address of the rebase token
-    * @return the address of the rebase token
+     * @notice Get the address of the rebase token
+     * @return the address of the rebase token
      */
     function getrebaseToken() external view returns (address) {
         return address(i_rebaseToken);

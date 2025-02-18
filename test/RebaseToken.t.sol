@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import { Test, console } from "forge-std/Test.sol";
-import { RebaseToken } from "../src/RebaseToken.sol";
-import { Vault } from "../src/Vault.sol";
-import { IRebaseToken } from "../src/interfaces/IRebaseToken.sol"; 
+import {Test, console} from "forge-std/Test.sol";
+import {RebaseToken} from "../src/RebaseToken.sol";
+import {Vault} from "../src/Vault.sol";
+import {IRebaseToken} from "../src/interfaces/IRebaseToken.sol";
 
 contract RebaseTokenTest is Test {
     RebaseToken private rebaseToken;
@@ -32,7 +32,7 @@ contract RebaseTokenTest is Test {
         amount = bound(amount, 1e5, type(uint96).max);
         // 1. deposit
         vm.startPrank(user);
-        vm.deal(user, amount); 
+        vm.deal(user, amount);
         vault.deposit{value: amount}();
         // (bool success,) = address(vault).call{value: amount}("");
         // 2. check our rebase token balance
@@ -47,7 +47,7 @@ contract RebaseTokenTest is Test {
         uint256 endBalance = rebaseToken.balanceOf(user);
         assertGt(endBalance, middleBalance);
 
-        assertApproxEqAbs(endBalance -middleBalance, middleBalance - startBalance, 1); // assertEq → assertApproxEqAbs
+        assertApproxEqAbs(endBalance - middleBalance, middleBalance - startBalance, 1); // assertEq → assertApproxEqAbs
 
         vm.stopPrank();
     }
@@ -56,7 +56,7 @@ contract RebaseTokenTest is Test {
         amount = bound(amount, 1e5, type(uint96).max);
         // 1. deposit
         vm.startPrank(user);
-        vm.deal(user, amount); 
+        vm.deal(user, amount);
         vault.deposit{value: amount}();
         assertEq(rebaseToken.balanceOf(user), amount);
         // 2. redeem
@@ -219,5 +219,4 @@ contract RebaseTokenTest is Test {
     //     uint256 principleAmountAfterWarp = rebaseToken.principalBalanceOf(user);
     //     assertEq(principleAmountAfterWarp, amount);
     // }
-
 }
