@@ -3,10 +3,9 @@ src = "src"
 out = "out"
 libs = ["lib"]
 remappings = [
-    "@chainlink/contract-ccip=lib/chainlink/contracts",
-    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts",
-    "@ccip/=lib/ccip/",
-    "@chainlink-local/=lib/chainlink-local/"
+    "@chainlink/=lib/chainlink-local/",
+    "@ccip/contracts=lib/chainlink-local/lib/ccip/contracts/",
+    "@openzeppelin/=lib/openzeppelin-contracts/"
 ]
 rpc_endpoints = { sepolia-eth = "https://eth-sepolia.g.alchemy.com/v2/wHEFFjcDt1xkPRjzDZycgAsnKWk1GHcK", arb-sepolia = "https://arb-sepolia.g.alchemy.com/v2/wHEFFjcDt1xkPRjzDZycgAsnKWk1GHcK"}
 # via-ir = true

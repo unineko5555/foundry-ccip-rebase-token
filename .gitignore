@@ -1,6 +1,7 @@
 # Compiler files
 cache/
 out/
+zkout/
 
 # Ignores development broadcast logs
 !/broadcast
@@ -14,6 +15,3 @@ docs/
 .env
 
 lib
-
-out
-zkout

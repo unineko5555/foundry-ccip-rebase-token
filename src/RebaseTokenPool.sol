@@ -10,7 +10,7 @@ import {IRebaseToken} from "./interfaces/IRebaseToken.sol";
 contract RebaseTokenPool is TokenPool {
     // _rnmProxy: RemoteNetworkManagerProxy, _router: Router
     constructor(IERC20 _token, address[] memory _allowlist, address _rmnProxy, address _router)
-        TokenPool(_token, _allowlist, _rmnProxy, _router)
+        TokenPool(_token, 18, _allowlist, _rmnProxy, _router)
     { // 18が不要？？
     }
 

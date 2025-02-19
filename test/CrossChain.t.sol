@@ -115,9 +115,9 @@ contract CrossChainTest is Test {
     ) public {
         vm.selectFork(fork);
         vm.startPrank(owner);
-        // bytes[] memory remotePoolAddress = new bytes[](1);
-        // remotePoolAddress[0] = abi.encode(remotePool);
-        bytes memory remotePoolAddress = abi.encode(remotePool); //型方修正
+        bytes[] memory remotePoolAddresses = new bytes[](1);
+        remotePoolAddresses[0] = abi.encode(remotePool);
+        // bytes memory remotePoolAddress = abi.encode(remotePool); //型方修正
         TokenPool.ChainUpdate[] memory chainsToAdd = new TokenPool.ChainUpdate[](1);
         // struct ChainUpdate {
         //     uint64 remoteChainSelector; // ──╮ Remote chain selector
@@ -129,14 +129,14 @@ contract CrossChainTest is Test {
         // }
         chainsToAdd[0] = TokenPool.ChainUpdate({
             remoteChainSelector: remoteChainSelector,
-            allowed: true,
-            remotePoolAddress: remotePoolAddress,
+            // allowed: true,
+            remotePoolAddresses: remotePoolAddresses,
             remoteTokenAddress: abi.encode(remoteTokenAddress),
             outboundRateLimiterConfig: RateLimiter.Config({isEnabled: false, capacity: 0, rate: 0}),
             inboundRateLimiterConfig: RateLimiter.Config({isEnabled: false, capacity: 0, rate: 0})
         });
-        // TokenPool(localPool).applyChainUpdates(new uint64[](0), chainsToAdd); //localPoolエラー
-        TokenPool(localPool).applyChainUpdates(chainsToAdd); 
+        TokenPool(localPool).applyChainUpdates(new uint64[](0), chainsToAdd); //localPoolエラー
+        // TokenPool(localPool).applyChainUpdates(chainsToAdd); 
         vm.stopPrank();
     }
 
